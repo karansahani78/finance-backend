@@ -1,61 +1,61 @@
-# Finance Data Processing & Access Control Backend
+# 💰 Finance Data Processing & Access Control Backend
 
-A production-oriented REST API backend for a finance dashboard system. Built with Spring Boot 3, PostgreSQL, JWT auth, and role-based access control.
-
----
-
-## Tech Stack
-
-- **Java 17** + **Spring Boot 3.2**
-- **PostgreSQL 15** (primary datastore)
-- **Spring Security** with stateless JWT authentication
-- **Spring Data JPA** + **Hibernate** (ORM)
-- **Bucket4j** (in-memory per-IP rate limiting)
-- **Testcontainers** + **JUnit 5** (integration tests with real Postgres)
-- **Lombok** (boilerplate reduction)
+A **production-grade REST API** for a finance dashboard system, built with **Spring Boot 3**, featuring secure authentication, role-based access control, and scalable architecture.
 
 ---
 
-## Project Layout
+## 🚀 Tech Stack
+
+* **Java 17** + **Spring Boot 3.2**
+* **PostgreSQL 15** (Primary Database)
+* **Spring Security + JWT** (Stateless Authentication)
+* **Spring Data JPA + Hibernate**
+* **Bucket4j** (Rate Limiting)
+* **Testcontainers + JUnit 5** (Integration Testing)
+* **Lombok** (Boilerplate Reduction)
+
+---
+
+## 🧱 Project Architecture
 
 ```
 src/
 ├── main/java/com/finance/
-│   ├── config/            # Security config
-│   ├── controller/        # REST layer (Auth, User, Transaction, Dashboard)
+│   ├── config/            # Security & app configuration
+│   ├── controller/        # REST controllers (Auth, Users, Transactions, Dashboard)
 │   ├── dto/
-│   │   ├── request/       # Input DTOs with validation annotations
-│   │   └── response/      # Output DTOs (never expose entities directly)
-│   ├── exception/         # Custom exceptions + global handler (RFC 9457 ProblemDetail)
-│   ├── filter/            # Rate limit filter (Bucket4j)
+│   │   ├── request/       # Input DTOs with validation
+│   │   └── response/      # Output DTOs (no entity exposure)
+│   ├── exception/         # Global exception handling (RFC 9457 ProblemDetail)
+│   ├── filter/            # Rate limiting (Bucket4j)
 │   ├── model/             # JPA entities
-│   │   └── enums/         # Role, UserStatus, TransactionType, TransactionCategory
-│   ├── repository/        # Spring Data JPA repos with custom JPQL queries
-│   ├── security/          # JWT util, auth filter, UserDetailsService
+│   │   └── enums/         # Domain enums
+│   ├── repository/        # Data access layer (Spring Data JPA)
+│   ├── security/          # JWT, filters, UserDetailsService
 │   └── service/           # Business logic layer
 └── main/resources/
-    ├── application.yml
+    └── application.yml
 ```
 
 ---
 
-## Getting Started
+## ⚙️ Getting Started
 
 ### Prerequisites
 
-- Java 17+
-- Maven 3.9+
-- PostgreSQL 15+ running locally (or Docker)
+* Java 17+
+* Maven 3.9+
+* PostgreSQL 15+ (local or Docker)
 
-### 1. Create the database
+### 1. Create Database
 
 ```sql
 CREATE DATABASE financedb;
 ```
 
-### 2. Configure credentials
+### 2. Configure Application
 
-Edit `src/main/resources/application.yml`:
+Update `application.yml`:
 
 ```yaml
 spring:
@@ -65,58 +65,63 @@ spring:
     password: your_pg_password
 ```
 
-### 3. Run the application
+### 3. Run Application
 
 ```bash
 mvn spring-boot:run
 ```
 
-Flyway will automatically run the migrations and seed three default users on first boot.
+---
+
+## 👤 Default Users
+
+| Role    | Email                                           | Password    |
+| ------- | ----------------------------------------------- | ----------- |
+| ADMIN   | [admin@finance.io](mailto:admin@finance.io)     | password123 |
+| ANALYST | [analyst@finance.io](mailto:analyst@finance.io) | password123 |
+| VIEWER  | [viewer@finance.io](mailto:viewer@finance.io)   | password123 |
 
 ---
 
-## Default Users (seeded via Flyway)
+## 🔐 Role Permissions
 
-| Role    | Email                 | Password    |
-|---------|-----------------------|-------------|
-| ADMIN   | admin@finance.io      | password123 |
-| ANALYST | analyst@finance.io    | password123 |
-| VIEWER  | viewer@finance.io     | password123 |
-
-> The bcrypt hash in the seed file corresponds to `password123` with cost factor 12.
-
----
-
-## Role Permissions
-
-| Endpoint group              | VIEWER | ANALYST | ADMIN |
-|-----------------------------|--------|---------|-------|
-| POST /api/auth/login        | ✓      | ✓       | ✓     |
-| GET  /api/transactions/**   | ✓      | ✓       | ✓     |
-| POST/PUT/DELETE /api/transactions/** | ✗ | ✗    | ✓     |
-| GET  /api/dashboard/**      | ✗      | ✓       | ✓     |
-| /api/users/**               | ✗      | ✗       | ✓     |
+| Endpoint                      | VIEWER | ANALYST | ADMIN |
+| ----------------------------- | ------ | ------- | ----- |
+| POST /api/auth/login          | ✓      | ✓       | ✓     |
+| GET /api/transactions/**      | ✓      | ✓       | ✓     |
+| POST/PUT/DELETE /transactions | ✗      | ✗       | ✓     |
+| GET /api/dashboard/**         | ✗      | ✓       | ✓     |
+| /api/users/**                 | ✗      | ✗       | ✓     |
 
 ---
 
-## API Reference
+## 🏗️ Architecture Diagram
 
-### Auth
+![Architecture Diagram](https://github.com/user-attachments/assets/52be7082-739b-4bfa-8ee4-4b9279018131)
+
+🔗 High-level design: [https://app.eraser.io/workspace/bUsiGLd88P39hGYSbHHu](https://app.eraser.io/workspace/bUsiGLd88P39hGYSbHHu)
+
+---
+
+## 📡 API Reference
+
+### 🔑 Auth
 
 #### POST `/api/auth/login`
+
 ```json
 {
   "email": "admin@finance.io",
   "password": "password123"
 }
 ```
-Response includes a `Bearer` token. Pass it as `Authorization: Bearer <token>` on every subsequent request.
 
 ---
 
-### Transactions
+### 💸 Transactions
 
 #### POST `/api/transactions`
+
 ```json
 {
   "amount": 5000.00,
@@ -127,35 +132,16 @@ Response includes a `Bearer` token. Pass it as `Authorization: Bearer <token>` o
 }
 ```
 
-Valid `type` values: `INCOME`, `EXPENSE`
-
-Valid `category` values: `SALARY`, `FREELANCE`, `INVESTMENT`, `FOOD`, `TRANSPORT`, `ENTERTAINMENT`, `HEALTHCARE`, `UTILITIES`, `EDUCATION`, `SHOPPING`, `RENT`, `INSURANCE`, `OTHER`
-
 #### GET `/api/transactions`
 
-Supports the following query parameters:
-
-| Param      | Type     | Description                              |
-|------------|----------|------------------------------------------|
-| `type`     | string   | Filter by `INCOME` or `EXPENSE`          |
-| `category` | string   | Filter by category name                  |
-| `from`     | date     | Start date (ISO format: `YYYY-MM-DD`)    |
-| `to`       | date     | End date (ISO format: `YYYY-MM-DD`)      |
-| `search`   | string   | Searches within the description field    |
-| `page`     | int      | Page number (0-indexed, default: 0)      |
-| `size`     | int      | Page size (default: 20, max: 100)        |
-| `sort`     | string   | Field to sort by (default: `txnDate`)    |
-| `direction`| string   | `asc` or `desc` (default: `desc`)        |
-
-#### GET `/api/transactions/{id}`
-#### PUT `/api/transactions/{id}` — partial update, all fields optional
-#### DELETE `/api/transactions/{id}` — soft delete (record stays in DB with `deleted_at` set)
+Supports filters, pagination, and sorting.
 
 ---
 
-### Users (Admin only)
+### 👥 Users (Admin Only)
 
 #### POST `/api/users`
+
 ```json
 {
   "name": "Jane Doe",
@@ -165,68 +151,38 @@ Supports the following query parameters:
 }
 ```
 
-#### GET `/api/users`
-
-| Param      | Description                       |
-|------------|-----------------------------------|
-| `search`   | Searches name and email           |
-| `page`     | Page number (0-indexed)           |
-| `size`     | Page size (max 100)               |
-| `sort`     | Field to sort by                  |
-| `direction`| `asc` or `desc`                   |
-
-#### GET `/api/users/{id}`
-#### PUT `/api/users/{id}` — update name, role, or status (all optional)
-#### DELETE `/api/users/{id}` — soft delete, also sets status to `INACTIVE`
-
 ---
 
-### Dashboard (Analyst + Admin)
+### 📊 Dashboard
 
 #### GET `/api/dashboard/summary`
 
-Returns:
-- `totalIncome` — sum of all income transactions
-- `totalExpenses` — sum of all expense transactions
-- `netBalance` — income minus expenses
-- `incomeByCategory` — map of category → total income
-- `expenseByCategory` — map of category → total expenses
-- `recentActivity` — last 10 transactions
-- `monthlyTrend` — monthly breakdown of income vs expenses
-- `weeklyTrend` — weekly breakdown of income vs expenses
+Returns aggregated financial insights:
+
+* Total Income / Expenses
+* Net Balance
+* Category breakdowns
+* Trends (monthly & weekly)
 
 ---
 
-## Error Handling
+## ⚠️ Error Handling
 
-All errors follow the RFC 9457 `ProblemDetail` format:
+Standardized using **RFC 9457 ProblemDetail**:
 
 ```json
 {
   "status": 400,
   "detail": "Validation failed",
-  "errors": {
-    "amount": "Amount must be greater than zero",
-    "txnDate": "Transaction date cannot be in the future"
-  },
   "timestamp": "2024-03-15T10:30:00Z"
 }
 ```
 
-Common HTTP codes used:
-- `400` Bad Request — validation errors
-- `401` Unauthorized — invalid credentials
-- `403` Forbidden — insufficient permissions
-- `404` Not Found — resource doesn't exist or was soft-deleted
-- `409` Conflict — duplicate email on user creation
-- `422` Unprocessable Entity — business rule violation (e.g. invalid date range)
-- `429` Too Many Requests — rate limit exceeded
-
 ---
 
-## Rate Limiting
+## 🚦 Rate Limiting
 
-Each unique IP address is limited to **60 requests per minute** by default. Adjust in `application.yml`:
+* **60 requests/minute per IP**
 
 ```yaml
 rate-limit:
@@ -235,39 +191,47 @@ rate-limit:
 ```
 
 ---
- Live API available with Swagger UI for testing: https://your-app.onrender.com/swagger-ui/index.html (use provided credentials to generate JWT and authorize requests).
 
+## 🌐 Live API
 
-## Running Tests
+Swagger UI:
 
-Tests use Testcontainers, so Docker must be running.
+👉 [https://your-app.onrender.com/swagger-ui/index.html](https://your-app.onrender.com/swagger-ui/index.html)
+
+---
+
+## 🧪 Testing
 
 ```bash
 mvn test
 ```
 
-The test suite includes:
-- **Unit tests** — service layer with Mockito (UserServiceTest, TransactionServiceTest)
-- **Integration tests** — full HTTP stack with MockMvc and a real Postgres container (AuthControllerIntegrationTest, TransactionControllerIntegrationTest, UserControllerIntegrationTest, DashboardControllerIntegrationTest)
+Includes:
+
+* Unit Tests (Mockito)
+* Integration Tests (Testcontainers + PostgreSQL)
 
 ---
 
-## Assumptions & Design Decisions
+## 🧠 Design Decisions
 
-**Soft deletes everywhere** — Both users and transactions use `deleted_at` timestamps instead of hard deletes. Hibernate's `@SQLRestriction("deleted_at IS NULL")` automatically filters these out in all queries. This preserves audit history without needing a separate archive table.
+* Soft deletes via `deleted_at`
+* DTO-based API responses (no entity exposure)
+* Centralized security config
+* Stateless JWT authentication
+* In-memory rate limiting (scalable via Redis)
+* Production-ready error handling
 
-**Entities never returned directly** — All responses go through dedicated DTO classes (`UserResponse`, `TransactionResponse`, etc.). This gives full control over what fields are exposed and prevents leaking internal state like password hashes.
+---
 
-**RFC 9457 ProblemDetail** — Spring Boot 3's built-in `ProblemDetail` type is used for all error responses. It's a standard format that most API clients already understand and avoids defining a custom error envelope.
+## 📌 Notes
 
-**Role enforcement at the route level** — Access rules are declared in `SecurityConfig` rather than scattered across individual controller methods. This makes the permission model easier to audit at a glance.
+* JWT secret should be externalized in production
+* Database migrations handled via Flyway (recommended)
+* Suitable for cloud deployment (Render, AWS, etc.)
 
-**Partial updates via optional fields** — PUT requests accept DTOs where all fields are optional. Only non-null values get applied to the entity. This avoids the need for a separate PATCH endpoint while still keeping request bodies clean.
+---
 
-**No global CORS config** — Left intentionally unconfigured to keep the scope focused on backend logic. In a real deployment, this would be added in `SecurityConfig` based on the frontend origin.
+## ⭐ Summary
 
-**In-memory rate limiting** — Bucket4j with a `ConcurrentHashMap` handles rate limiting per client IP. This works for a single-instance deployment. For a distributed setup, this would need to be backed by Redis.
-
-**JWT secret in config** — The JWT secret is in `application.yml` for simplicity. In production this should come from an environment variable or a secrets manager.
-
-**Passwords in seed SQL** — The bcrypt hash in `V2__seed_users.sql` represents `password123` with cost 12. In a real project the seed would either reference environment variables or be handled by a one-time setup script.
+This project demonstrates **clean architecture, secure API design, and production-ready backend practices**, making it suitable for real-world finance systems and backend engineering roles.
