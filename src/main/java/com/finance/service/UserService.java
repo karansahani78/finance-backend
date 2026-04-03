@@ -79,6 +79,6 @@ public class UserService {
 
     private User fetchOrThrow(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> ResourceNotFoundException.user(id));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found for given id "+id));
     }
 }
