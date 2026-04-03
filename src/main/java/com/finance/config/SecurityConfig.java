@@ -36,14 +36,13 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        // ✅ FIX HERE
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/transactions/**").hasAnyRole("VIEWER", "ANALYST", "ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/dashboard/**").hasAnyRole("ANALYST", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/transactions/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/transactions/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/transactions/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

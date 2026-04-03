@@ -4,15 +4,11 @@ import com.finance.model.enums.Role;
 import com.finance.model.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@SQLRestriction("deleted_at IS NULL")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,16 +29,12 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // ✅ FIXED (only this part changed)
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.OTHER)
-    @Column(nullable = false, columnDefinition = "user_role")
+    @Column(nullable = false)
     private Role role;
 
-    // ✅ ALSO fix here (same issue can happen)
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.OTHER)
-    @Column(nullable = false, columnDefinition = "user_status")
+    @Column(nullable = false)
     private UserStatus status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
