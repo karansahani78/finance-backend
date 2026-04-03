@@ -10,7 +10,6 @@ A production-oriented REST API backend for a finance dashboard system. Built wit
 - **PostgreSQL 15** (primary datastore)
 - **Spring Security** with stateless JWT authentication
 - **Spring Data JPA** + **Hibernate** (ORM)
-- **Flyway** (schema migrations)
 - **Bucket4j** (in-memory per-IP rate limiting)
 - **Testcontainers** + **JUnit 5** (integration tests with real Postgres)
 - **Lombok** (boilerplate reduction)
@@ -36,8 +35,6 @@ src/
 │   └── service/           # Business logic layer
 └── main/resources/
     ├── application.yml
-    ├── application-test.yml
-    └── db/migration/      # Flyway versioned SQL scripts
 ```
 
 ---
