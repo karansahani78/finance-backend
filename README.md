@@ -235,6 +235,8 @@ rate-limit:
 ```
 
 ---
+ Live API available with Swagger UI for testing: https://your-app.onrender.com/swagger-ui/index.html (use provided credentials to generate JWT and authorize requests).
+
 
 ## Running Tests
 
