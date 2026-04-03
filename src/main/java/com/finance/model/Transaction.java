@@ -28,11 +28,11 @@ public class Transaction {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "transaction_type")
+    @Column(nullable = false)
     private TransactionType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "transaction_category")
+    @Column(nullable = false)
     private TransactionCategory category;
 
     @Column(name = "txn_date", nullable = false)
@@ -41,6 +41,7 @@ public class Transaction {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // ✅ relation is correct
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;

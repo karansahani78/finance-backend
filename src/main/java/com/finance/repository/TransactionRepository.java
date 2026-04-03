@@ -18,11 +18,11 @@ import java.util.List;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
     @Query("SELECT t FROM Transaction t WHERE " +
-           "(:type IS NULL OR t.type = :type) AND " +
-           "(:category IS NULL OR t.category = :category) AND " +
-           "(:from IS NULL OR t.txnDate >= :from) AND " +
-           "(:to IS NULL OR t.txnDate <= :to) AND " +
-           "(:search IS NULL OR LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+            "(:type IS NULL OR t.type = :type) AND " +
+            "(:category IS NULL OR t.category = :category) AND " +
+            "(:from IS NULL OR t.txnDate >= :from) AND " +
+            "(:to IS NULL OR t.txnDate <= :to) AND " +
+            "(:search IS NULL OR LOWER(t.description) LIKE LOWER(CONCAT('%', CAST(:search AS string), '%')))")
     Page<Transaction> findWithFilters(
             @Param("type") TransactionType type,
             @Param("category") TransactionCategory category,

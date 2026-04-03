@@ -49,9 +49,30 @@ public class TransactionController {
             @RequestParam(defaultValue = "txnDate") String sort,
             @RequestParam(defaultValue = "desc") String direction
     ) {
-        Sort.Direction dir = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        PageRequest pageable = PageRequest.of(page, Math.min(size, 100), Sort.by(dir, sort));
-        return ResponseEntity.ok(transactionService.list(type, category, from, to, search, pageable));
+        // ✅ FIXED SORT HANDLING (supports both formats)
+        Sort sortObj;
+
+        if (sort.contains(",")) {
+            // supports: sort=txnDate,desc
+            String[] parts = sort.split(",");
+            String field = parts[0];
+            Sort.Direction dir = (parts.length > 1 && parts[1].equalsIgnoreCase("asc"))
+                    ? Sort.Direction.ASC
+                    : Sort.Direction.DESC;
+            sortObj = Sort.by(dir, field);
+        } else {
+            // supports: sort=txnDate&direction=desc
+            Sort.Direction dir = direction.equalsIgnoreCase("asc")
+                    ? Sort.Direction.ASC
+                    : Sort.Direction.DESC;
+            sortObj = Sort.by(dir, sort);
+        }
+
+        PageRequest pageable = PageRequest.of(page, Math.min(size, 100), sortObj);
+
+        return ResponseEntity.ok(
+                transactionService.list(type, category, from, to, search, pageable)
+        );
     }
 
     @GetMapping("/{id}")
